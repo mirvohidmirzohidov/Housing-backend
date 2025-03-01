@@ -154,6 +154,20 @@ app.get("/api/users", async (req, res) => {
   }
 });
 
+// Id bo'yicha ma'lumot olish
+app.get("/api/houses/:id", async (req, res) => {
+  try {
+    const house = await House.findById(req.params.id).populate("user", "username email");
+    if (!house) {
+      return res.status(404).json({ error: "Uy topilmadi" });
+    }
+    res.json(house);
+  } catch (error) {
+    res.status(500).json({ error: "Uy ma'lumotlarini olishda xatolik" });
+  }
+});
+
+
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
