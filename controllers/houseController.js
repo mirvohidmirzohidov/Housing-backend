@@ -1,0 +1,3 @@
+const House = require('../models/House');
+exports.getHouses = async (req, res) => { const houses = await House.find(); res.json(houses); };
+exports.addHouse = async (req, res) => { try { const houseData = req.body; houseData.attachments = req.files.map(file => ({ imgPath: file.path })); const house = await House.create(houseData); res.json(house); } catch (err) { res.status(400).json({ message: 'Error adding house' }); } };
