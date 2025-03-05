@@ -135,9 +135,11 @@ app.get("/api/houses/favouriteList", async (req, res) => {
     const favouriteHouses = await House.find({ favourite: true });
     res.json(favouriteHouses);
   } catch (error) {
-    res.status(500).json({ message: "Error fetching favourite houses", error });
+    console.error("Error fetching favourite houses:", error.message); // Xatoni konsolga chiqarish
+    res.status(500).json({ message: "Error fetching favourite houses", error: error.message });
   }
 });
+
 
 
 // MongoDB connection
