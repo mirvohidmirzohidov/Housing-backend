@@ -101,22 +101,30 @@ app.post("/api/houses", authMiddleware, upload.array("attachments", 5), async (r
   }
 });
 
+
 // add Favourite house
-app.put("api/houses/addFavourite", async (req, res) => {
+app.put('/api/houses/addFavourite/:id', async (req, res) => {
   try {
-    const { id } = req.body; // Body orqali id olinadi
+    const { id } = req.params;
+    const { favourite } = req.query; 
 
-    if (!id) return res.status(400).json({ message: "House ID required" });
+    if (favourite !== "true" && favourite !== "false") {
+      return res.status(400).json({ message: "Noto‘g‘ri favourite qiymati" });
+    }
 
-    const house = await House.findById(id);
-    if (!house) return res.status(404).json({ message: "House not found" });
+    const updatedHouse = await House.findByIdAndUpdate(
+      id,
+      { favourite: favourite === "true" },
+      { new: true }
+    );
 
-    house.favourite = !house.favourite; // Holatni o‘zgartirish (toggle)
-    await house.save();
+    if (!updatedHouse) {
+      return res.status(404).json({ message: "Uy topilmadi" });
+    }
 
-    res.json({ message: "Updated successfully", house });
+    res.json(updatedHouse);
   } catch (error) {
-    res.status(500).json({ message: "Error updating favourite", error });
+    res.status(500).json({ error: error.message });
   }
 });
 
@@ -138,7 +146,6 @@ app.patch('/api/houses', async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
-
 
 
 // MongoDB connection
