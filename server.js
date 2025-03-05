@@ -22,6 +22,7 @@ app.get("/api/houses", async (req, res) => {
   }
 });
 
+
 app.post("/api/houses", authMiddleware, upload.array("attachments", 5), async (req, res) => {
   try {
     if (!req.user) {
@@ -131,19 +132,10 @@ app.put('/api/houses/addFavourite/:id', async (req, res) => {
 // Favourite houses list
 app.get("api/houses/favouriteList", async (req, res) => {
   try {
-    const favouriteHouses = await House.find({ favourite: true }); // Faqat favourite: true bo'lganlarni olish
+    const favouriteHouses = await House.find({ favourite: true });
     res.json(favouriteHouses);
   } catch (error) {
     res.status(500).json({ message: "Error fetching favourite houses", error });
-  }
-});
-
-app.patch('/api/houses', async (req, res) => {
-  try {
-    const result = await House.updateMany({}, { $set: { favourite: true } });
-    res.json({ message: "Barcha uylar favourite bo‘ldi!", result });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
   }
 });
 
