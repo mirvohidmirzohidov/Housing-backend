@@ -15,7 +15,7 @@ app.use("/uploads", express.static("uploads"));
 
 app.get("/api/houses", async (req, res) => {
   try {
-    const houses = await House.find().populate("user", "username email"); // Foydalanuvchi ma'lumotlarini ham olish
+    const houses = await House.find().populate("user", "username email");
     res.json(houses);
   } catch (error) {
     res.status(500).json({ error: "Uylarni olishda xatolik" });
@@ -130,7 +130,7 @@ app.put('/api/houses/addFavourite/:id', async (req, res) => {
 });
 
 // Favourite houses list
-app.get("api/houses/favouriteList", async (req, res) => {
+app.get("/api/houses/favouriteList", async (req, res) => {
   try {
     const favouriteHouses = await House.find({ favourite: true });
     res.json(favouriteHouses);
