@@ -36,7 +36,8 @@ const HouseSchema = new mongoose.Schema({
   category: {
     name: String
   },
-  status: { type: Boolean, default: true }
+  status: { type: Boolean, default: true },
+  favourite: { type: Boolean, default: false } 
 });
 
 module.exports = mongoose.model("House", HouseSchema);

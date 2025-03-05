@@ -101,6 +101,45 @@ app.post("/api/houses", authMiddleware, upload.array("attachments", 5), async (r
   }
 });
 
+// add Favourite house
+app.put("api/houses/addFavourite", async (req, res) => {
+  try {
+    const { id } = req.body; // Body orqali id olinadi
+
+    if (!id) return res.status(400).json({ message: "House ID required" });
+
+    const house = await House.findById(id);
+    if (!house) return res.status(404).json({ message: "House not found" });
+
+    house.favourite = !house.favourite; // Holatni o‘zgartirish (toggle)
+    await house.save();
+
+    res.json({ message: "Updated successfully", house });
+  } catch (error) {
+    res.status(500).json({ message: "Error updating favourite", error });
+  }
+});
+
+// Favourite houses list
+app.get("api/houses/favouriteList", async (req, res) => {
+  try {
+    const favouriteHouses = await House.find({ favourite: true }); // Faqat favourite: true bo'lganlarni olish
+    res.json(favouriteHouses);
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching favourite houses", error });
+  }
+});
+
+app.patch('/api/houses', async (req, res) => {
+  try {
+    const result = await House.updateMany({}, { $set: { favourite: true } });
+    res.json({ message: "Barcha uylar favourite bo‘ldi!", result });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+
 
 // MongoDB connection
 mongoose.connect(process.env.MONGO_URI)
