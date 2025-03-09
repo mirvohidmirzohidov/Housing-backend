@@ -107,7 +107,7 @@ app.post("/api/houses", authMiddleware, upload.array("attachments", 5), async (r
 app.put('/api/houses/addFavourite/:id', async (req, res) => {
   try {
     const { id } = req.params;
-    const { favourite } = req.query; 
+    const { favourite } = req.query;
 
     if (favourite !== "true" && favourite !== "false") {
       return res.status(400).json({ message: "Noto‘g‘ri favourite qiymati" });
@@ -157,17 +157,33 @@ const UserSchema = new mongoose.Schema({
 const User = mongoose.model("User", UserSchema);
 
 // Register endpoint
+const bcrypt = require("bcrypt");
+const User = require("./models/User"); // User modelini chaqiramiz
+
 app.post("/api/register", async (req, res) => {
   try {
-    const { username, email, password } = req.body;
+    const { firstName, lastName, email, password } = req.body;
+
+    // Agar email allaqachon mavjud bo'lsa, foydalanuvchini ro'yxatdan o'tkazmaymiz
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({ error: "User with this email already exists" });
+    }
+
+    // Parolni hash qilish
     const hashedPassword = await bcrypt.hash(password, 10);
-    const newUser = new User({ username, email, password: hashedPassword });
+
+    // Yangi foydalanuvchini yaratish
+    const newUser = new User({ firstName, lastName, email, password: hashedPassword });
     await newUser.save();
+
     res.status(201).json({ message: "User registered successfully" });
   } catch (error) {
+    console.error("Registration error:", error);
     res.status(500).json({ error: "Registration failed" });
   }
 });
+
 
 // Login endpoint
 app.post("/api/login", async (req, res) => {

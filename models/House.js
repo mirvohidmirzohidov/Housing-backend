@@ -37,7 +37,8 @@ const HouseSchema = new mongoose.Schema({
     name: String
   },
   status: { type: Boolean, default: true },
-  favourite: { type: Boolean, default: false } 
+
+  favourite: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }]
 });
 
 module.exports = mongoose.model("House", HouseSchema);
