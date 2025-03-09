@@ -147,17 +147,7 @@ mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log("MongoDB connected"))
   .catch(err => console.error("MongoDB connection error:", err));
 
-// User schema
-const UserSchema = new mongoose.Schema({
-  username: { type: String, required: true },
-  email: { type: String, required: true, unique: true },
-  password: { type: String, required: true }
-});
-
-const User = mongoose.model("User", UserSchema);
-
 // Register endpoint
-const bcrypt = require("bcrypt");
 const User = require("./models/User"); // User modelini chaqiramiz
 
 app.post("/api/register", async (req, res) => {
