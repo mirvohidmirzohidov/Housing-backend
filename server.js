@@ -107,27 +107,26 @@ app.post("/api/houses", authMiddleware, upload.array("attachments", 5), async (r
 app.put('/api/houses/addFavourite/:id', async (req, res) => {
   try {
     const { id } = req.params;
-    const { favourite } = req.query;
 
-    if (favourite !== "true" && favourite !== "false") {
-      return res.status(400).json({ message: "Noto‘g‘ri favourite qiymati" });
-    }
-
-    const updatedHouse = await House.findByIdAndUpdate(
-      id,
-      { favourite: favourite === "true" },
-      { new: true }
-    );
-
-    if (!updatedHouse) {
+    // Hozirgi uyning ma'lumotini olish
+    const house = await House.findById(id);
+    if (!house) {
       return res.status(404).json({ message: "Uy topilmadi" });
     }
+
+    // `favourite` ni aksini olish
+    const updatedHouse = await House.findByIdAndUpdate(
+      id,
+      { favourite: !house.favourite },
+      { new: true }
+    );
 
     res.json(updatedHouse);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });
+
 
 // Favourite houses list
 app.get("/api/houses/favouriteList", async (req, res) => {
